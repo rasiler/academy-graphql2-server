@@ -11,7 +11,7 @@ import {
   GraphQLFloat,
   GraphQLEnumType,
   GraphQLNonNull,
-  GraphQLInterfaceType
+  GraphQLInterfaceType,
 } from 'graphql';
 
 function toMap(userList) {
@@ -19,7 +19,7 @@ function toMap(userList) {
         map[user.username.toLowerCase()] = user;
         return map;
     },{});
-    
+
     console.log(m);
     return m;
 }
@@ -72,8 +72,6 @@ const User = new GraphQLObjectType({
   })
 });
 
-
-
 const Category = new GraphQLEnumType({
   name: 'Category',
   description: 'A Category of the blog',
@@ -84,8 +82,6 @@ const Category = new GraphQLEnumType({
     OTHER: {value: 'other'}
   }
 });
-
-
 
 
 const Post = new GraphQLObjectType({
@@ -130,8 +126,19 @@ const Query = new GraphQLObjectType({
       }
     },
 
-
-
+    users: {
+      type: new GraphQLList(User),
+      description: 'List of users',
+      args: {
+        username: {type: GraphQLString}
+      },
+      resolve: function(source, {username}) {
+        if (username) {
+          return UsersMap[username];
+        }
+        return UsersList;
+      }
+    },
 
     latestPost: {
       type: Post,
@@ -202,7 +209,7 @@ const Mutation = new GraphQLObjectType({
         return post;
       }
     }
-   
+
   }
 });
 
